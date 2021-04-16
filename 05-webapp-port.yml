@@ -1,18 +1,21 @@
 ---
 - name: update web servers
-  hosts: web
+  hosts: app
   become: yes
 
   tasks:
-  - name: ensure git is installed
-    package:
-      name: git
-      state: present
+  - name: ensure port is changed
+    copy:
+      src: httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
 
-  - name: ensure code is updated
-    git:
-      repo: 'https://github.com/venkat4107/ecomm.git'
-      dest: /var/www/html
+  - name: ensure SELinux is permisive
+    selinux:
+      policy: targeted
+      state: permissive
 
-
+  - name: ensure apache is restarted
+    service:
+      name: httpd
+      state: restarted
 ...

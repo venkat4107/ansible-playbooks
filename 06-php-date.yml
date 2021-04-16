@@ -1,0 +1,38 @@
+---
+
+- name: update web servers
+  hosts: all
+  become: yes
+  handlers: 
+
+  - name: restart httpd
+    service:
+      name: httpd
+      state: restarted
+
+  tasks:
+  - name: ensure port is changed
+    copy:
+      src: httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+    notify:    
+    - restart httpd
+
+  - name: ensure SELinux is permisive
+    selinux:
+      policy: targeted
+      state: permissive
+
+  - name: ensure date is updated
+    copy:
+      src: date.php
+      dest: /var/www/html/date.php
+
+  - name: ensure PHP is installed
+    package:
+      name: php
+      state: present
+    notify: 
+    - restart httpd
+
+...

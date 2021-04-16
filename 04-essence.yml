@@ -1,6 +1,6 @@
 ---
 - name: update web servers
-  hosts: web
+  hosts: app
   become: yes
 
   tasks:
